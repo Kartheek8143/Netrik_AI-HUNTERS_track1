@@ -1,183 +1,191 @@
-Team Details
+Team: AI Hunters
+College: G. Pulla Reddy Engineering College
 
-Team Name: AI Hunters
+Team Members
 
-Team Members:
 S. Mythili
-T. Yaswanth
-S. Rohan
-T. Kartheek
 
-College Name:
-G. Pulla Reddy Engineering College, Kurnool
+T. Yaswanth
+
+S. Rohan
+
+T. Kartheek
 
 Project Title
 
-AI HR Agent — Intelligent Recruitment & HR Automation System
+AI HR Agent — an audit-ready, deterministic HR automation engine for resume screening, interview scheduling, structured interview generation, leave management, and escalation handling.
 
-Project Description
+Project Description (implementation summary)
 
-The AI HR Agent is a fully integrated, enterprise-grade Human Resource Automation System designed to streamline and optimize the entire recruitment and HR management workflow.
+AI HR Agent converts raw resumes, job descriptions, availability windows, and leave requests into a fully auditable hiring pipeline that outputs the exact JSON required by the hackathon scoring system. Key capabilities implemented in code:
 
-This system simulates a real-world Applicant Tracking System (ATS) and HR Operations Engine by combining:
+Deterministic resume screening using a fixed-vocabulary TF-IDF pipeline combined with weighted skill matching and experience scoring. Every candidate receives an explainable score_breakdown.
 
-Resume Screening and Ranking
-Interview Scheduling
-AI-Based Questionnaire Generation
-Leave Management with Policy Enforcement
-Escalation Detection System
-FSM-Based Candidate Pipeline Tracking
+Constraint-aware interview scheduling that respects business hours (10:00–17:30 IST), enforces a 10-minute buffer between interviews, matches expertise & interview type, and uses load-balanced selection with deterministic fallbacks.
 
-The solution is deterministic, scalable, and designed with production-level architecture principles.
+Interview question generation with an LLM-first path (Groq) and a deterministic template fallback, producing exactly 8 structured questions (3 technical, 2 behavioral, 2 situational, 1 candidate-specific) each with 4 measurable evaluation points.
 
-1. Resume Screening and Candidate Ranking
+Policy-first leave management that counts working days, enforces notice and consecutive-day limits, checks team capacity, and includes an advisory ML risk scorer (if model artifacts are present). Rule violations always override ML suggestions.
 
-The system uses:
+Rule-based escalation detection with severity levels (high/medium/low) and urgent/distress detection.
 
-TF-IDF Vectorization
-Cosine Similarity
-Weighted Skill Matching
-Experience Normalization
-Coverage-based ATS Sorting
+A strict finite-state machine (FSM) controlling candidate transitions with audit logging, idempotency checks, and terminal-state protection.
 
-Ranking Formula:
+Final export_results() returns the exact hackathon JSON format.
 
-Final Score =
-0.50 × Semantic Score
+Resume Screening Engine — Technical Details
 
-* 0.35 × Skill Match Score
-* 0.15 × Experience Score
+The resume ranking system is deterministic, explainable, and tuned for reproducibility.
 
-Additional Enhancements:
+TF-IDF + Semantic Matching
 
-Required skill coverage prioritization
-Experience gap penalty enforcement
-Soft skill bonus scoring
-Deterministic scoring (no randomness)
+Fixed vocabulary derived from curated SKILL_MAP (no vocabulary drift).
 
-This ensures fair, explainable, and reproducible candidate ranking.
+max_features = 6000 (explicitly fixed).
 
-2. Intelligent Interview Scheduling
+n-gram range = (1, 2) (unigrams + bigrams).
 
-The scheduling engine performs:
+sublinear_tf = True and norm = "l2".
 
-Skill-based interviewer matching
-Time window overlap detection
-Business hour enforcement (10:00 AM – 5:30 PM)
-10-minute buffer enforcement
-Load-balanced interviewer distribution
-Automatic fallback scheduling
-Manual time override option
+Vector comparison uses Cosine Similarity and cosine values are used directly (no min-max rescaling).
 
-The system also:
+Scoring breakdown
 
-Prevents double booking
-Logs scheduling conflicts
-Ensures FSM state compliance
+Semantic score (TF-IDF cosine) — 50% weight
 
-3. AI Interview Questionnaire Generator
+Weighted skill score — 35% weight (required skills = 3 pts, preferred = 1 pt)
 
-The system generates:
+Experience score — 15% weight (ratio based, capped at 1.2 then normalized)
 
-3 Technical Questions (based on required skills)
-2 Behavioral Questions (STAR-based)
-2 Situational Questions
-1 Candidate-Specific Question
+Other features
 
-Primary Mode:
+Required skills are boosted (JD skills repeated 3×) and echoed into resumes that already mention them to tighten semantic alignment.
 
-LLM-powered structured question generation (Groq API)
+Two-stage sort: primary = required-skill coverage, secondary = final match score.
 
-Fallback Mode:
+Per-candidate score_breakdown (semantic_score, skill_score, experience_score, bonuses, penalties, final_score) for explainability.
 
-Deterministic rule-based question templates
+Interview Question Generator
 
-Each question includes:
+Primary: Groq LLaMA 3.3 — llama-3.3-70b-versatile (Groq integration used when GROQ_API_KEY is present).
+Fallback: Deterministic templates (offline safe).
 
-Difficulty level
-Category
-4 structured evaluation points
+Generator guarantees:
 
-4. FSM-Based Recruitment Pipeline
+Exactly 8 structured questions (3 technical, 2 behavioral, 2 situational, 1 candidate-specific).
 
-The system uses a Finite State Machine (FSM) to control candidate status transitions:
+Each question includes: question, type, category, difficulty and exactly 4 measurable evaluation_points.
 
-APPLIED → PROCESSING → SHORTLISTED
-→ INTERVIEW_SCHEDULED → INTERVIEWED
-→ SELECTED / REJECTED
+Strict JSON validation and auto-regeneration attempts for compliance.
 
-Features:
+(Explicit model reference: Groq LLaMA 3.3, model id used: llama-3.3-70b-versatile.)
 
-Valid transition enforcement
-Terminal state lock
-Audit trail logging
-Precondition checks (e.g., no interview without slot booking)
+Interview Scheduling System
 
-This ensures strict workflow integrity.
+Constraint-aware deterministic scheduler:
 
-5. Leave Management System
+Business hours enforced: 10:00 — 17:30 IST
 
-The leave module integrates:
+Timezone aware (Asia/Kolkata) datetimes
 
-Leave balance auto-calculation from dataset
-Working-day calculation (Mon–Fri)
-Max consecutive day enforcement
-Minimum notice validation
-Medical document enforcement (if required)
-Team leave capacity control (max 3 per day)
-Overlapping leave detection
+10-minute buffer between interviews
 
-ML Integration:
+Expertise/type matching and duration fitting
 
-A trained model predicts:
+Load-balanced interviewer selection (fewest bookings preferred)
 
-Leave approval probability
-Risk score
-Confidence percentage
+Stepwise deterministic fallbacks (including an earliest-available search)
 
-However, rule-based policy enforcement remains authoritative.
+Leave Management
 
-6. Intelligent Escalation Detection
+Policy-first leave processing with robust checks:
 
-The system detects and categorizes HR queries based on severity:
+Working-day counting (Mon–Fri)
 
-High (harassment, legal issues, discrimination)
-Medium (policy conflicts, compensation issues)
-Low (general queries)
+Minimum notice and max consecutive day checks
 
-Includes:
+Team capacity check (configurable max_leave_per_day)
 
-Urgency keyword detection
-Compound severity detection
-Structured escalation logging
+Overlap detection against approved leaves
 
-Final Output Structure
+Optional ML advisory (RandomForest, random_state=42) that provides ml_confidence and risk_score — advisory only (rules take precedence)
 
-The system generates hackathon-compliant structured JSON output:
+Escalation Handler
+
+Keyword and compound detection rules for severity:
+
+HIGH / MEDIUM / LOW categories
+
+Harassment + emotional distress → HIGH
+
+Urgency word detection for escalation prioritization
+
+Structured logging of escalations for audit
+
+FSM Architecture (detailed)
+
+Finite State Machine drives pipeline correctness and auditability.
+
+States (PipelineStatus)
+applied → processing → shortlisted → interview_scheduled → interviewed → selected (terminal) / rejected (terminal)
+
+Allowed transitions (programmatically enforced)
+
+applied → processing | rejected
+
+processing → shortlisted | rejected
+
+shortlisted → interview_scheduled | rejected
+
+interview_scheduled → interviewed | rejected
+
+interviewed → selected | rejected
+
+Preconditions & Guards
+
+Candidate must exist in pipeline before transitions.
+
+Terminal states (selected, rejected) are locked — no further changes.
+
+Idempotent transitions (same → same) are rejected.
+
+Whitelist enforcement prevents invalid jumps.
+
+interview_scheduled requires a booked slot entry in _booked_slots.
+
+Every successful transition is recorded to audit_trail with timestamp & reason (enum-driven).
+
+Auditability
+
+Audit entries include: candidate_id, from, to, timestamp (ISO), and reason.
+
+Allows judges/auditors to replay decision history and verify correctness.
+
+Export / Hackathon Format
+
+export_results() returns the exact required structure:
 
 {
-"team_id": "AI_Hunters",
-"track": "track_2_hr_agent",
-"results": {
-"resume_screening": {...},
-"scheduling": {...},
-"questionnaire": {...},
-"pipeline": {...},
-"leave_management": {...},
-"escalations": [...]
+  "team_id": "AI_Hunters",
+  "track": "track_2_hr_agent",
+  "results": {
+    "resume_screening": {"ranked_candidates": [...], "scores": [...]},
+    "scheduling": {"interviews_scheduled": [...], "conflicts": [...]},
+    "questionnaire": {"questions": [...]},
+    "pipeline": {"candidates": {id: status}},
+    "leave_management": {"processed_requests": [...]},
+    "escalations": [...]
+  }
 }
-}
+How to run (quick)
 
-Fully deterministic and evaluation-ready.
+Clone the repo.
 
-Technologies Used
+(Optional) Create venv and install deps:
 
-Python 3
-Pandas
-Scikit-Learn
-TF-IDF and Cosine Similarity
-Random Forest (Leave ML)
-Groq LLM (llama-3.3-70b-versatile)
-Dataclasses
-FSM Architecture
-Rule-Based Engines
+python -m venv venv
+source venv/bin/activate   # macOS / Linux
+venv\Scripts\activate      # Windows
+pip install -r requirements.txt
+
+Dependencies (example): pandas, numpy, scikit-learn, joblib, groq (only if using Groq API).
