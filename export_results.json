@@ -1,0 +1,177 @@
+{
+  "team_id": "AI_Hunters",
+  "track": "track_2_hr_agent",
+  "results": {
+    "resume_screening": {
+      "ranked_candidates": [
+        "C001",
+        "C003",
+        "C002"
+      ],
+      "scores": [
+        0.463704,
+        0.050691,
+        0.0
+      ]
+    },
+    "scheduling": {
+      "interviews_scheduled": [],
+      "conflicts": []
+    },
+    "questionnaire": {
+      "questions": [
+        {
+          "question": "Design a high-performance Python application that utilizes REST APIs to handle a large volume of concurrent requests. How would you optimize the application for scalability and reliability?",
+          "type": "technical",
+          "category": "Python",
+          "difficulty": "hard",
+          "evaluation_points": [
+            "Request handling strategy",
+            "Scalability approach",
+            "Reliability mechanisms",
+            "Performance optimization techniques"
+          ]
+        },
+        {
+          "question": "Explain how you would implement authentication and authorization in a REST API using Python. What security considerations would you take into account?",
+          "type": "technical",
+          "category": "REST APIs",
+          "difficulty": "medium",
+          "evaluation_points": [
+            "Authentication mechanism",
+            "Authorization approach",
+            "Security threats mitigation",
+            "Error handling strategy"
+          ]
+        },
+        {
+          "question": "Describe how you would containerize a Python application using Docker. What considerations would you take into account for deployment and scalability?",
+          "type": "technical",
+          "category": "Docker",
+          "difficulty": "medium",
+          "evaluation_points": [
+            "Containerization strategy",
+            "Deployment approach",
+            "Scalability considerations",
+            "Resource utilization optimization"
+          ]
+        },
+        {
+          "question": "Tell me about a time when you had to work with a team to resolve a critical issue in a project. What was your role, and how did you contribute to the resolution?",
+          "type": "behavioral",
+          "category": "Teamwork",
+          "difficulty": "medium",
+          "evaluation_points": [
+            "Role in the team",
+            "Contribution to resolution",
+            "Communication strategy",
+            "Impact on project timeline"
+          ]
+        },
+        {
+          "question": "Describe a situation where you had to take ownership of a project and lead it to completion. What were the challenges you faced, and how did you overcome them?",
+          "type": "behavioral",
+          "category": "Leadership",
+          "difficulty": "hard",
+          "evaluation_points": [
+            "Project scope",
+            "Challenges faced",
+            "Leadership approach",
+            "Project outcome"
+          ]
+        },
+        {
+          "question": "Suppose you are tasked with deploying a Python application on a cloud platform with limited resources. How would you prioritize the deployment, and what trade-offs would you make?",
+          "type": "situational",
+          "category": "Cloud deployment",
+          "difficulty": "medium",
+          "evaluation_points": [
+            "Deployment prioritization",
+            "Resource allocation strategy",
+            "Trade-off considerations",
+            "Risk mitigation approach"
+          ]
+        },
+        {
+          "question": "Imagine you are working on a project with a tight deadline, and you encounter a critical issue that requires significant changes to the codebase. How would you approach this situation, and what decisions would you make?",
+          "type": "situational",
+          "category": "Time-sensitive project",
+          "difficulty": "hard",
+          "evaluation_points": [
+            "Issue assessment",
+            "Decision-making approach",
+            "Risk evaluation",
+            "Communication strategy"
+          ]
+        },
+        {
+          "question": "Since the candidate skills are not provided, let's assume the candidate has experience with Python. Can you describe a project where you utilized Python to build a data processing pipeline, and what were the outcomes and challenges you faced?",
+          "type": "candidate-specific",
+          "category": "Python project",
+          "difficulty": "medium",
+          "evaluation_points": [
+            "Project scope",
+            "Pipeline architecture",
+            "Challenges faced",
+            "Outcome and impact"
+          ]
+        }
+      ]
+    },
+    "pipeline": {
+      "candidates": {
+        "C001": "processing",
+        "C002": "processing",
+        "C003": "processing"
+      }
+    },
+    "leave_management": {
+      "processed_requests": [
+        {
+          "request_id": "LR001",
+          "employee_id": "E100",
+          "leave_type": "annual",
+          "start_date": "2026-04-01T00:00:00+05:30",
+          "end_date": "2026-04-05T00:00:00+05:30",
+          "days_requested": 3,
+          "approved": true,
+          "reason": "Approved",
+          "violations": [],
+          "remaining_balance": 12
+        }
+      ]
+    },
+    "escalations": [
+      {
+        "employee_id": "E101",
+        "query_text": "I'm facing harassment from my manager and it's causing mental stress",
+        "priority": "high",
+        "escalation_reason": "High-severity keyword matched: harassment",
+        "timestamp": "2026-03-01T02:11:08.427385",
+        "context": {
+          "employee_id": "E101"
+        }
+      },
+      {
+        "employee_id": "E102",
+        "query_text": "I want to provide feedback about the new policy",
+        "priority": "low",
+        "escalation_reason": "Low-severity keyword matched: feedback",
+        "timestamp": "2026-03-01T02:11:08.427421",
+        "context": {
+          "employee_id": "E102"
+        }
+      },
+      {
+        "employee_id": "E103",
+        "query_text": "Request for urgent salary revision due to unfair treatment",
+        "priority": "medium",
+        "escalation_reason": "Multiple medium-severity keywords: salary revision, unfair treatment",
+        "timestamp": "2026-03-01T02:11:08.427439",
+        "context": {
+          "employee_id": "E103"
+        }
+      }
+    ]
+  }
+}
